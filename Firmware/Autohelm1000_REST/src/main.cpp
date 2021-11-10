@@ -17,6 +17,9 @@ const char *main_page = R"=====(
 
 <body>
     <style>
+    table {
+        width:100%
+    }
     .greenbutton {
         background-color:green; /* Green */
         border: none;
@@ -59,8 +62,10 @@ const char *main_page = R"=====(
     <div id="demo">
         <table>
             <tr>
+        <td rowspan="2" ><button type="button" class="redbutton" onclick="sendData(-100)">&lt;</button></td>
         <td><button type="button" class="redbutton" onclick="sendData(-1)">-1</button></td>
         <td><button type="button" class="greenbutton"  onclick="sendData(1)">+1</button></td>
+        <td rowspan="2" ><button type="button" class="greenbutton" onclick="sendData(100)">&gt;</button></td>
         </tr>
         <td><button type="button" class="redbutton"  onclick="sendData(-10)">-10</button></td>
         <td><button type="button" class="greenbutton"  onclick="sendData(10)">+10</button></td>
@@ -78,20 +83,21 @@ SoftwareSerial ah(0, 2);
 
 void handleRoot()
 { 
-  server.send(200, "text/html", main_page); //Send web page}
+  server.send(200, "text/html", main_page); //Send web page
 }
 
 void setRelativeBearing()
 {
   if (server.arg("bearing") == "")
   {
-    Serial.println("Ret5quired parameter bearing not found!");
+    Serial.println("Required parameter bearing not found!");
   }
   else
   { 
     String message = server.arg("bearing"); //Gets the value of the query parameter
     int bearing = message.toInt();
     ah.println(bearing);
+    Serial.println(bearing);
     server.send(200, "text/html", ""); //Send web page}
   }
 }
@@ -121,6 +127,11 @@ void setup(void)
   ah.begin(9600);
   WiFi.mode(WIFI_STA);
   wifiManager.autoConnect(ssid, password);
+
+  if (!MDNS.begin("autohelm1000")) {             // Start the mDNS responder for esp8266.local
+    Serial.println("Error setting up MDNS responder!");
+  }
+  Serial.println("mDNS responder started");
 
   // Port defaults to 8266
   // ArduinoOTA.setPort(8266);
