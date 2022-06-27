@@ -18,7 +18,16 @@ void setup()
 
 void pressButton(int relative_bearing)
 {
-  int pin = relative_bearing < 0 ? B1 : B2;
+  // int pin = relative_bearing < 0 ? B1 : B2;
+  int pin = B2;
+  switch(relative_bearing)
+  {
+    case  -1: 
+    case  10: pin = B2; break;
+    case   1: 
+    case -10: pin = B1; break;
+    
+  }
   int value = abs(relative_bearing) >= 10 ? HIGH : LOW;
   digitalWrite(LED_BUILTIN, HIGH);
   digitalWrite(pin, value);
@@ -30,7 +39,7 @@ void pressButton(int relative_bearing)
   Serial.print(pin);
   Serial.print(" ");
   Serial.println(value);
-  delay(100);                                                                             
+  delay(200);                                                                             
 }
 
 void updateBearing(int relative_bearing)
